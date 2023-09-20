@@ -11,8 +11,33 @@ DNF::DNF(const std::string &argLine) {
 
 DNF::~DNF(void) { }
 
-void DNF::print(std::ofstream &out) const {
+int intlog2(int v) {
+    int ans = 0;
+    while (v >>= 1) {
+        ++ans;
+    }
+    return ans;
+}
 
+void DNF::print() const {
+    int count = intlog2(count_implicants);
+
+    std::cout << "Count variable: " << count << std::endl;
+    for (int i = 0; i < count; ++i) {
+        std::cout << (char)('A' + i);
+    }
+    std::cout << std::endl;
+    for (int i = 0; i < data.size(); ++i) {
+        for (int j = count - 1; j >= 0; --j) {
+            if (data[i].get_p() & (1 << j)) {
+                std::cout << "-";
+            }
+            else {
+                std::cout << ((data[i].get_num() & (1 << j)) > 0 ? 1 : 0);
+            }
+        }
+        std::cout << std::endl;
+    }
 }
 
 void DNF::printTableVectorImplicants(void) const {
@@ -99,6 +124,55 @@ void DNF::minimize(void) {
     }
     printTableVectorImplicants();
     printInplecantsTable();
+    print();
+
+    std::vector<int> visit(data.size(), false);
+    std::vector<bool> plus(count_implicants);
+    std::vector<Implicant> min_variant(data);
+    int perenos = 1;
+
+    copy.resize(data.size() - size, 0);
+    for (int i = 0; i < (1 << data.size()); ++i) {
+        for (int j = 0; j < plus.size(); ++j)
+            plus[j] = 0;
+        for (int j = 0; j < visit.size(); ++j) {
+            if (visit[j] + perenos == 2) {
+                visit[j] = 0;
+                perenos = 1;
+            }
+            else if (visit[j] + perenos == 1) {
+                visit[j] = 1;
+                perenos = 0;
+            }
+            else {
+                visit[j] = 0;
+                perenos = 0;
+            }
+        }
+        perenos = 1;
+        for (int j = 0; j < data.size(); ++j) {
+            if (visit[j]) {
+                for (int k = 0; k < count_implicants; ++k) {
+                    if (line[k] == '1')
+                        plus[k] = plus[k] || ((k & (~data[j].get_p())) == data[j].get_num());
+                }
+            }
+        }
+        bool flag = 1;
+        for (int j = 0; j < plus.size(); ++j) {
+            if (line[j] == '1') {
+                flag &= plus[j];
+            }
+        }
+        if (flag && Implicant::count_one(i + 1) < min_variant.size()) {
+            min_variant.clear();
+            for (int j = 0; j < visit.size(); ++j) {
+                if (visit[j])
+                    min_variant.push_back(data[j]);
+            }
+        }
+    }
+    data = min_variant;
 }
 
 bool DNF::checkPwAllImplicant(void) {
@@ -110,7 +184,7 @@ bool DNF::checkPwAllImplicant(void) {
 }
 
 std::ofstream &operator<<(std::ofstream &out, const DNF &dnf) {
-    dnf.print(out);
+    dnf.print();
     return (out);
 }
 

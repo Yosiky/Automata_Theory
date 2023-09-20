@@ -12,6 +12,7 @@ class DNF {
     std::vector<Implicant> data;
     std::string line;
     int count_implicants;
+    int count_ones;
 
     DNF(const DNF &obj);
     DNF &operator=(const DNF &obj);
@@ -21,7 +22,7 @@ public:
     DNF(const std::string &argLine);
     ~DNF(void);
 
-    void print(std::ofstream &in) const;
+    void print() const;
     void printTableVectorImplicants(void) const;
     void printInplecantsTable(void) const;
     void minimize(void);
