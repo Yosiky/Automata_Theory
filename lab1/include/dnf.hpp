@@ -16,7 +16,9 @@ class DNF {
 
     DNF(const DNF &obj);
     DNF &operator=(const DNF &obj);
-    bool checkPwAllImplicant(void);
+    bool check_pw_all_implicant(void) const;
+    bool check_overlap_condition(int num, const Implicant &impl) const;
+
 public:
 
     DNF(const std::string &argLine);
