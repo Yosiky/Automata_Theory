@@ -113,6 +113,7 @@ void DNF::minimize(void) {
         for (int i = 0; i < data.size() - size; ++i) {
             for (int j = i + 1; j < data.size() - size; ++j) {
                 if (Implicant::isPatch(data[i], data[j])) {
+                    std::cout << "Implicants patched " << i << " " << j << " " << data[i].get_num() << " " << data[j].get_num() << std::endl;
                     // если импликанты data[i] и data[j] можно склеить
                     value = Implicant::patch(data[i], data[j]);
                     it = find(copy.begin(), copy.end(), value);
