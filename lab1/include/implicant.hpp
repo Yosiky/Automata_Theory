@@ -32,11 +32,7 @@ public:
     void set_pw(bool argPw);
     bool get_pw(void) const;
 
-    template <class T>
-    bool operator==(T b) {
-        return (this->num == b.num && this->ind == b.ind && this->p == b.p
-                && this->pw == b.pw && this->inf == b.inf);
-    }
+    bool operator==(const Implicant &b);
 
 };
 

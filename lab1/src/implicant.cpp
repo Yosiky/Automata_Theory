@@ -94,3 +94,10 @@ void Implicant::set_pw(bool argPw) {
 bool Implicant::get_pw(void) const {
     return (pw);
 }
+
+bool Implicant::operator==(const Implicant &b) {
+    return (this->num == b.num && this->ind == b.ind && this->p == b.p
+            && this->pw == b.pw && this->inf == b.inf);
+}
+
+
