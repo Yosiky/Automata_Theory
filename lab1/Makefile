@@ -16,16 +16,12 @@ SRCS	=	main.cpp				\
 OBJ_DIR =	obj
 OBJS	=	$(addprefix $(OBJ_DIR)/,$(SRCS:.cpp=.o))
 
-# OBJ =		${addprefix ${OBJS_DIR}/,${SRC:=.o}}
-# OBJ_BONUS =	${addprefix ${OBJS_DIR}/,${SRC_BONUS:=.o}}
-
 NAME	=	lab1
 
 .PHONY: all clean fclean re
 
 
 all: $(OBJ_DIR) $(NAME)
-	$(CC) src/*.cpp -I include
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
 	g++ $(CFLAGS) -c $? -o $@ $(LIBS) $(INCS)
