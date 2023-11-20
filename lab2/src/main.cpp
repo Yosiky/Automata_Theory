@@ -7,6 +7,7 @@
 #include "dnf.hpp"
 #include "implicant.hpp"
 
+#define LINE "=============================================="
 
 // read table from file
 std::vector<int> split_line_by_integer(const std::string &str, char sep) {
@@ -58,7 +59,7 @@ std::vector<std::vector<int> > ReadTable::table;
 
 // print table in std::cout
 void print_table(const std::vector<std::vector<int> > &table) {
-    std::cout << "=============================================" << std::endl;
+    std::cout << LINE << std::endl;
     std::cout << "Table: " << std::endl;
     for (int i = 0; i < table.size(); ++i) {
         for (int j = 0; j < table[i].size(); ++j) {
@@ -66,11 +67,11 @@ void print_table(const std::vector<std::vector<int> > &table) {
         }
         std::cout << std::endl;
     }
-    std::cout << "=============================================" << std::endl;
+    std::cout << LINE << std::endl;
 }
 
 void pirnt_table_with_mask(const std::vector<std::vector<int> > &table, const std::vector<uint32_t> &mask) {
-    std::cout << "=============================================" << std::endl;
+    std::cout << LINE << std::endl;
     std::cout << "Table: " << std::endl;
     for (int i = 0; i < table.size(); ++i) {
         for (int j = 0; j < table[i].size(); ++j) {
@@ -81,7 +82,7 @@ void pirnt_table_with_mask(const std::vector<std::vector<int> > &table, const st
         }
         std::cout << std::endl;
     }
-    std::cout << "=============================================" << std::endl;
+    std::cout << LINE << std::endl;
 
 }
 
@@ -123,12 +124,12 @@ void create_code_gray(std::vector<uint32_t> &mask, int count_state, int count_d_
 
 template <class T>
 void print_vector(const std::vector<T> &arr, char endl=' ') {
-    std::cout << "=========================================" << std::endl;
+    std::cout << LINE << std::endl;
     std::cout << "Print vector:" << std::endl;
     for (const T &i : arr)
         std::cout << i << endl;
     std::cout << std::endl;
-    std::cout << "=========================================" << std::endl;
+    std::cout << LINE << std::endl;
 }
 
 int main(int argc, char **argv) {
@@ -182,6 +183,7 @@ int main(int argc, char **argv) {
                 }
             }
         }
+        std::cout << cdnf[line_it] << std::endl;
     }
 
     print_vector(cdnf, '\n');
@@ -189,8 +191,10 @@ int main(int argc, char **argv) {
     std::vector<DNF> mdnf;
     
     for (int i = 0; i < cdnf.size(); ++i) {
+        std::cout << "Trigger #" << i + 1 << std::endl;
         mdnf.push_back(cdnf[i]);
         mdnf[i].minimize();
+        std::cout << LINE << std::endl;
     }
 
     return (0);

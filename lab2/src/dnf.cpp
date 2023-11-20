@@ -37,7 +37,6 @@ void DNF::print() const {
 
     int count = intlog2(count_implicants); // сколько переменных используется
 
-    std::cout << "Count variable: " << count << std::endl;
     for (int i = 0; i < count; ++i) // выводит название переменных
         std::cout << (char)('A' + i);
     std::cout << std::endl;
