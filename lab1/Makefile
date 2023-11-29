@@ -39,3 +39,6 @@ fclean: clean
 	rm -rf $(NAME)
 
 re: fclean all
+
+run: all
+	./$(NAME) test/test_case.txt test/log.txt
