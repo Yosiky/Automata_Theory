@@ -16,7 +16,7 @@ OBJS	=	$(addprefix $(OBJ_DIR)/,$(SRCS:.cpp=.o))
 
 NAME	=	lab2
 
-.PHONY: all clean fclean re
+.PHONY: all clean fclean re run
 
 
 all: $(OBJ_DIR) $(NAME)
