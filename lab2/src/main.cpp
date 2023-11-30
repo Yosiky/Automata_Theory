@@ -96,7 +96,8 @@ int analize_outstate(const std::vector<std::vector<int> > table) {
 
     for (int i = 0; i < table.size(); ++i) {
         for (int j = 0; j < table.size(); ++j) {
-            output_state.insert(table[i][j]);
+            if (table[i][j])
+                output_state.insert(table[i][j]);
         }
     }
     return (output_state.size());
@@ -161,40 +162,106 @@ int main(int argc, char **argv) {
     create_code_gray(mask, count_state, count_d_trigger);
     print_vector(mask);
 
-    std::vector<std::string> cdnf;
+    std::vector<std::string> cdnf_state;
     std::string line(1 << (count_input + count_d_trigger), '-');
     std::cout << "Start line: " << line << std::endl;
 
     for (int line_it = 0; line_it < count_d_trigger; ++line_it) {
-        std::cout << "Trigger : " << line_it << std::endl;
+        std::cout << "Trigger : " << line_it + 1<< std::endl;
         int mask_value = 1 << line_it;
         int value;
 
-        cdnf.push_back(line);
+        cdnf_state.push_back(line);
         for (int i = 0; i < ftable.size(); ++i) {
             value = i << count_d_trigger;
             for (int j = 0; j < ftable[i].size(); ++j) {
                 if (ftable[i][j]) {
                     if (mask[ftable[i][j] - 1] & mask_value) {
-                        cdnf[line_it][value + mask[ftable[i][j] - 1]] = '1';
+                        cdnf_state[line_it][value + mask[j]] = '1';
                     } else {
-                        cdnf[line_it][value + mask[ftable[i][j] - 1]] = '0';
-                   }
+                        cdnf_state[line_it][value + mask[j]] = '0';
+                    }
                 }
             }
         }
-        std::cout << cdnf[line_it] << std::endl;
+        std::cout << cdnf_state[line_it] << std::endl;
     }
 
-    print_vector(cdnf, '\n');
+    print_vector(cdnf_state, '\n');
     pirnt_table_with_mask(ftable, mask);
-    std::vector<DNF> mdnf;
+    std::vector<DNF> mdnf_state;
     
-    for (int i = 0; i < cdnf.size(); ++i) {
+    for (int i = 0; i < cdnf_state.size(); ++i) {
         std::cout << "Trigger #" << i + 1 << std::endl;
-        mdnf.push_back(cdnf[i]);
-        mdnf[i].minimize();
+        mdnf_state.push_back(cdnf_state[i]);
+        if (i == 0)
+            mdnf_state[i].minimize();
+        else
+            mdnf_state[i].minimize(0);
+        mdnf_state[i].print();
         std::cout << LINE << std::endl;
+    }
+
+    line = std::string(1 << (count_input + count_d_trigger), '0');
+    std::vector<std::string> cdnf_output;
+
+    for (int line_it = 0; line_it < count_outstate; ++line_it) {
+        std::cout << "Trigger : " << line_it + 1 << std::endl;
+        int mask_value = 1 << line_it;
+        int value;
+
+        cdnf_output.push_back(line);
+        for (int i = 0; i < gtable.size(); ++i) {
+            value = i << count_d_trigger;
+            for (int j = 0; j < gtable[i].size(); ++j) {
+                if (gtable[i][j]) {
+                    if (line_it == (gtable[i][j] - 1)) {
+                        cdnf_output[line_it][value + mask[j]] = '1';
+                    }
+                }
+                else {
+                    cdnf_output[line_it][value + mask[j]] = '-';
+                }
+            }
+        }
+        std::cout << cdnf_output[line_it] << std::endl;
+    }
+    std::vector<DNF> mdnf_output;
+    
+    for (int i = 0; i < cdnf_output.size(); ++i) {
+        std::cout << "Trigger #" << i + 1 << std::endl;
+        mdnf_output.push_back(cdnf_output[i]);
+        mdnf_output[i].minimize();
+        mdnf_output[i].print();
+        std::cout << LINE << std::endl;
+    }
+
+    std::vector<int> check_word_inputs = {0, 1, 2, 3, 4, 5, 6};
+    std::vector<int> check_word_states = {0, 1, 7, 0, 3, 2, 7, 2};
+    std::vector<int> check_word_outputs = {0, 3, 3, 3, 3, 2, -1};
+    std::string ans;
+
+    for (int i = 0; i < check_word_inputs.size(); ++i) {
+        int value = (check_word_inputs[i] << count_d_trigger) + mask[check_word_states[i]];
+        ans = std::string(6, '0');
+        for (int j = 0; j < 6; ++j) {
+            if (value & (1 << j)) {
+                ans[j] = '1';
+            }
+        }
+        std::cout << value << std::endl;
+        
+        // std::cout << "state: ";
+        // for (int j = 0; j < cdnf_state.size(); ++j) {
+            // std::cout << cdnf_state[j][value];
+        // }
+        // std::cout << std::endl;
+        std::cout << "output: ";
+        for (int j = 0; j < cdnf_output.size(); ++j) {
+            std::cout << cdnf_output[j][value];
+        }
+        
+        std::cout << std::endl;
     }
 
     return (0);
