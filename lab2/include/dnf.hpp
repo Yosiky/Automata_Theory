@@ -27,7 +27,7 @@ public:
     void print() const;
     void printTableVectorImplicants(void) const;
     void printInplecantsTable(void) const;
-    void minimize(void);
+    void minimize(bool off=1);
 
 };
 

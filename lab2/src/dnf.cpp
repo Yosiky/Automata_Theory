@@ -106,7 +106,7 @@ void DNF::printInplecantsTable(void) const {
     }
 }
 
-void DNF::minimize(void) {
+void DNF::minimize(bool off) {
     // метод для минимизации ДНФ
 
     std::vector<Implicant> copy; // массив, где хранятся вычисляемые имплеканты
@@ -142,8 +142,7 @@ void DNF::minimize(void) {
         data = copy;
         copy.clear();
     }
-    print();
-
+    if (off) {
     std::vector<int> visit(data.size(), false); // используемые имплеканты
     std::vector<bool> plus(count_implicants); // ответы
     std::vector<Implicant> min_variant(data); // минимальный вариант
@@ -199,6 +198,7 @@ void DNF::minimize(void) {
         }
     }
     data = min_variant; // сохраняем результат
+    }
 }
 
 bool DNF::check_pw_all_implicant(void) const {
