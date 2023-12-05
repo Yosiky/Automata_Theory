@@ -39,3 +39,6 @@ re: fclean all
 
 run: all
 	./$(NAME) test/program.txt
+
+debug: all
+	gdb $(NAME) test/program.txt
