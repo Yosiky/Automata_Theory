@@ -27,10 +27,11 @@ int main(int argc, char **argv) {
     std::vector<Lexema *> expression;
 
     while (file >> c) {
-        while (c != '=' && file >> c) {
+        while (c != '=' && !isspace(c) && file >> c) {
             str.push_back(c);
             file >> c;
         }
+        while (!isspace(c) && file >> c) ;
         expression.push_back(Lexema::createLexema(str));
         assertm(c != '=', "Error: file is finish");
         str.clear();
