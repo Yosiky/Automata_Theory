@@ -53,29 +53,29 @@ void Lexema::reset(void) {
     value = (uint32_t)-1;
 }
 
-const std::string Lexema::print(void) {
-    std::string ans;
-
+void Lexema::print(std::ostream &out) {
+    // out << "\tPrint lexema: " << std::endl;
+    // out << "\t\tType: " << getType() << std::endl;
+    // out << "\t\tValue: ";
     switch (getType()) {
         case (Lexema::NUMBER):
-            ans = std::to_string(value & LEXEMA_MASK_NUMBER);
+            out << (value & LEXEMA_MASK_NUMBER);
             break;
         case (Lexema::ID):
-            ans = std::to_string(value & LEXEMA_MASK_ID);
+            out << (value & LEXEMA_MASK_ID);
             break;
         case (Lexema::OPERATION): {
-            char sym = value & LEXEMA_MASK_OPERATION;
-            ans.push_back(sym);
+            out << (char)(value & LEXEMA_MASK_OPERATION);
         }   break;
         default:
             assertm(true, "Error: type of lexema is not valid");
     }
-    return (ans);
+    // out << std::endl;
 }
 
 bool Lexema::checkIsNumber(const std::string &str) {
     for (int i = 0; i < str.size(); ++i) {
-        if (isdigit(str[i]))
+        if (!isdigit(str[i]))
             return (false);
     }
     return (true);
@@ -117,14 +117,14 @@ int Lexema::findTypeLexema(const std::string &str) {
     int type = (checkIsOperation(str) << OPERATION)
             | (checkIsId(str) << ID)
             | (checkIsNumber(str) << NUMBER);
-    int ans = 0;
+    int ans = -1;
     
-    std::cout << str << std::endl;
     assertm(type != 0, "Error: lexema is not valid");
     while (type > 0) {
         ++ans;
         type >>= 1;
     }
+    // --type;
     return (ans);
 }
 

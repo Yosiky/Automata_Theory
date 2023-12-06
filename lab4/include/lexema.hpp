@@ -46,7 +46,7 @@ public:
     // void setValue(uint32_t argValue);
     uint32_t getInfo(void);
     void reset(void);
-    const std::string print(void);
+    void print(std::ostream &out);
 
     static int checkLexema(Lexema::Type &type, const std::string &str);
     static Lexema *createLexema(const std::string &str);
