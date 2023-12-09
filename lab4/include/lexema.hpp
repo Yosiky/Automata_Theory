@@ -6,6 +6,7 @@
 # include <string>
 # include <ctype.h>
 # include <map>
+# include <set>
 
 # define assertm(cond, str)                                         \
     if (!(cond)) {                                                  \
@@ -23,7 +24,8 @@
 class Lexema {
 
     uint32_t value;
-    static std::map<std::string, uint32_t> names;
+    static std::map<uint32_t, std::string> names;
+    static std::set<std::string> s;
 
     static bool checkIsNumber(const std::string &str);
     static bool checkIsId(const std::string &str);
@@ -42,7 +44,7 @@ public:
 
     uint32_t getType(void);
     void setType(uint32_t type);
-    void setInfo(const std::string &str);
+    void setInfo(const std::string &str, uint32_t argValue=-1);
     // void setValue(uint32_t argValue);
     uint32_t getInfo(void);
     void reset(void);
@@ -50,6 +52,8 @@ public:
 
     static int checkLexema(Lexema::Type &type, const std::string &str);
     static Lexema *createLexema(const std::string &str);
+    static const std::string &getName(int id);
+    static int countVariables(void);
 
 };
 

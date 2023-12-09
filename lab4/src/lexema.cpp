@@ -1,6 +1,7 @@
 #include "lexema.hpp"
 
-std::map<std::string, uint32_t> Lexema::names;
+std::map<uint32_t, std::string> Lexema::names;
+std::set<std::string> Lexema::s;
 
 Lexema::Lexema(void) {
     reset();
@@ -14,13 +15,13 @@ void Lexema::setType(uint32_t type) {
     value = (value & (~LEXEMA_MASK_TYPE)) + (type << LEXEMA_SHIFT_TYPE);
 }
 
-void Lexema::setInfo(const std::string &str) {
+void Lexema::setInfo(const std::string &str, uint32_t argValue) {
     switch (getType()) {
         case (Lexema::NUMBER):
             value = (NUMBER << LEXEMA_SHIFT_TYPE) + (std::stoi(str) & LEXEMA_MASK_NUMBER);
             break;
         case (Lexema::ID):
-            value = (NUMBER << LEXEMA_SHIFT_TYPE) + (names[str] & LEXEMA_MASK_ID);
+            value = (NUMBER << LEXEMA_SHIFT_TYPE) + (argValue & LEXEMA_MASK_ID);
             break;
         case (Lexema::OPERATION):
             value = (OPERATION << LEXEMA_SHIFT_TYPE) + (str[0] & LEXEMA_MASK_OPERATION);
@@ -97,7 +98,7 @@ bool Lexema::checkIsOperation(const std::string &str) {
     }
     // todo: maybe need to add '='
     return (str[0] == '+' || str[0] == '-' || str[0] == '*' || str[0] == '/'
-            || str[0] == '(' || str[0] == ')' || str[0] == '=' || str[0] == ';');
+            || str[0] == '(' || str[0] == ')' || str[0] == '=' || str[0] == ';' || str[0] == '@');
 }
 
 int Lexema::checkLexema(Lexema::Type &type, const std::string &str) {
@@ -131,15 +132,26 @@ int Lexema::findTypeLexema(const std::string &str) {
 Lexema *Lexema::createLexema(const std::string &str) {
     Lexema *lexema = new Lexema;
     int type = findTypeLexema(str);
-    int nameId = names.size();
+    uint32_t nameId = s.size();
 
     lexema->setType(type);
     if (type == ID) {
-        if (names.count(str) == 0)
-            names[str] = nameId;
+        if (s.count(str) == 0) {
+            names[nameId] = str;
+            s.insert(str);
+        }
     }
-    lexema->setInfo(str);
+    lexema->setInfo(str, nameId);
     return (lexema);
 }
 
+const std::string &Lexema::getName(int id) {
+    if (names.count(id))
+        return (names[id]);
+    return ("");
+}
+
+int Lexema::countVariables(void) {
+    return (names.size());
+}
 
