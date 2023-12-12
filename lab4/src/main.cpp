@@ -26,7 +26,7 @@ void createPOLIZ(std::vector<Lexema *> &arr) {
         std::make_pair('/', 2),
         std::make_pair(';', -1) };
     static std::map<char, int> priorityShop = {
-        std::make_pair(')', -1),
+        std::make_pair('(', -1),
         std::make_pair('+', 1),
         std::make_pair('-', 1),
         std::make_pair('*', 2),
@@ -52,19 +52,9 @@ void createPOLIZ(std::vector<Lexema *> &arr) {
                     poliz.push_back(shopElem.second);
                     shopElem = shop.top();
                 }
-                if (c == ')' || c == ';') {
-                    if (c == ')') {
-                        shop.pop();
-                    }
-                    else if (c == ';') {
-                        shop.pop();
-                        // poliz.push_back(shopElem.second);
-                        break ;
-                    }
-                    else 
-                        assertm(true, "Error: char is not valid");
-                }
-                else 
+                if (c == ';') {
+                    break ;
+                } else 
                     shop.push(std::make_pair(priorityShop[c], arr[i]));
                 std::cout << "stack.top(): " << (shop.top().first) << std::endl;
             }   break;
