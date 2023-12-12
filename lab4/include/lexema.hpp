@@ -25,7 +25,7 @@ class Lexema {
 
     uint32_t value;
     static std::map<uint32_t, std::string> names;
-    static std::set<std::string> s;
+    static std::map<std::string, uint32_t> s;
 
     static bool checkIsNumber(const std::string &str);
     static bool checkIsId(const std::string &str);

@@ -10,6 +10,7 @@ void printExpression(std::vector<Lexema *> &arr) {
     std::cout << "Print expression" << std::endl;
     std::cout << "Count lexems: " << arr.size() << std::endl;
     for (Lexema *i : arr) {
+        // std::cout << "TYPE: " << i->getType() << " " << i->getInfo() << " ";
         i->print(std::cout);
         std::cout << " ";
     }
@@ -37,6 +38,7 @@ void createPOLIZ(std::vector<Lexema *> &arr) {
     std::vector<Lexema *> poliz;
 
     shop.push(std::make_pair(-2, Lexema::createLexema("@")));
+    poliz.push_back(arr[0]);
     for (int i = 2; i < arr.size(); ++i) {
         switch (arr[i]->getType()) {
             case (Lexema::NUMBER):
@@ -52,11 +54,13 @@ void createPOLIZ(std::vector<Lexema *> &arr) {
                     poliz.push_back(shopElem.second);
                     shopElem = shop.top();
                 }
-                if (c == ';') {
+                if (c == ')') {
+                    shop.pop();
+                }
+                else if (c == ';') {
                     break ;
                 } else 
                     shop.push(std::make_pair(priorityShop[c], arr[i]));
-                std::cout << "stack.top(): " << (shop.top().first) << std::endl;
             }   break;
             default: 
                 assertm(true, "Error: type's lexema is not valid")
@@ -64,6 +68,45 @@ void createPOLIZ(std::vector<Lexema *> &arr) {
     }
     arr = poliz;
 }
+
+void processPOLIZ(std::vector<Lexema *> &arr, std::vector<int> &memory) {
+    std::stack<int> shop;
+
+    for (int i = 1; i < arr.size(); ++i) {
+        switch (arr[i]->getType()) {
+            case (Lexema::NUMBER): 
+                shop.push(arr[i]->getInfo());
+                break;
+            case (Lexema::ID):
+                shop.push(memory[arr[i]->getInfo()]);
+                break;
+            case (Lexema::OPERATION): {
+                int a, b;
+
+                assertm(shop.size(), "Error: shop is empty");
+                b = shop.top();
+                shop.pop();
+                assertm(shop.size(), "Error: shop is empty");
+                a = shop.top();
+                shop.pop();
+                switch (arr[i]->getInfo()) {
+                    case '+': a = a + b; break;
+                    case '-': a = a - b; break;
+                    case '*': a = a * b; break;
+                    case '/': a = a / b; break;
+                    default: assertm(true, "Error: invalid operation");
+                }
+                shop.push(a);
+            } break;
+            default:
+                assertm(true, "Error: type's lexema is not valid");
+        }
+    }
+    assertm(arr[0]->getType() == Lexema::ID, "Error: type's lexema is not ID");
+    memory[arr[0]->getInfo()] = shop.top();
+    std::cout << Lexema::getName(arr[0]->getInfo()) << " = " << memory[arr[0]->getInfo()] << std::endl;
+}
+
 
 int main(int argc, char **argv) {
     assertm(argc > 1, "Error: no input program");
@@ -73,7 +116,7 @@ int main(int argc, char **argv) {
     int state = 0;
 
     std::vector<Lexema *> expression;
-    std::stack<std::pair<int32_t, Lexema *> > store;
+    std::vector<int> memory;
 
     while (file >> c) {
         while (c != ';') {
@@ -99,9 +142,11 @@ int main(int argc, char **argv) {
         expression.push_back(Lexema::createLexema(str));
         printExpression(expression);
         createPOLIZ(expression);
+        memory.resize(Lexema::countVariables());
         printExpression(expression);
+        processPOLIZ(expression, memory);
         str.clear();
         expression.clear();
     }
-
+    return (0);
 }

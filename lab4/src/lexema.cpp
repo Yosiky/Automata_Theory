@@ -1,7 +1,7 @@
 #include "lexema.hpp"
 
 std::map<uint32_t, std::string> Lexema::names;
-std::set<std::string> Lexema::s;
+std::map<std::string, uint32_t> Lexema::s;
 
 Lexema::Lexema(void) {
     reset();
@@ -21,7 +21,7 @@ void Lexema::setInfo(const std::string &str, uint32_t argValue) {
             value = (NUMBER << LEXEMA_SHIFT_TYPE) + (std::stoi(str) & LEXEMA_MASK_NUMBER);
             break;
         case (Lexema::ID):
-            value = (NUMBER << LEXEMA_SHIFT_TYPE) + (argValue & LEXEMA_MASK_ID);
+            value = (ID << LEXEMA_SHIFT_TYPE) + (argValue & LEXEMA_MASK_ID);
             break;
         case (Lexema::OPERATION):
             value = (OPERATION << LEXEMA_SHIFT_TYPE) + (str[0] & LEXEMA_MASK_OPERATION);
@@ -63,7 +63,7 @@ void Lexema::print(std::ostream &out) {
             out << (value & LEXEMA_MASK_NUMBER);
             break;
         case (Lexema::ID):
-            out << (value & LEXEMA_MASK_ID);
+            out << Lexema::getName(value & LEXEMA_MASK_ID);
             break;
         case (Lexema::OPERATION): {
             out << (char)(value & LEXEMA_MASK_OPERATION);
@@ -138,7 +138,10 @@ Lexema *Lexema::createLexema(const std::string &str) {
     if (type == ID) {
         if (s.count(str) == 0) {
             names[nameId] = str;
-            s.insert(str);
+            s[str] = nameId;
+        }
+        else {
+            nameId = s[str];
         }
     }
     lexema->setInfo(str, nameId);
