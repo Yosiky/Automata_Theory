@@ -46,32 +46,27 @@ void createPOLIZ(std::vector<Lexema *> &arr) {
             case (Lexema::OPERATION): {
                 char c = arr[i]->getInfo();
                 auto shopElem = shop.top();
-                
+
+                while (priorityLenta[c] <= shopElem.first) {
+                    shop.pop();
+                    poliz.push_back(shopElem.second);
+                    shopElem = shop.top();
+                }
                 if (c == ')' || c == ';') {
-                    if (priorityLenta[c] <= shopElem.first) {
-                        shop.pop();
-                        poliz.push_back(shopElem.second);
-                    }
-                    else if (c == ')') {
+                    if (c == ')') {
                         shop.pop();
                     }
                     else if (c == ';') {
                         shop.pop();
-                        poliz.push_back(shopElem.second);
+                        // poliz.push_back(shopElem.second);
                         break ;
                     }
                     else 
                         assertm(true, "Error: char is not valid");
                 }
-                else {
-                    if (priorityLenta[c] > shopElem.first) {
-                        shop.push(std::make_pair(priorityShop[c], arr[i]));
-                    }
-                    else {
-                        shop.pop();
-                        poliz.push_back(shopElem.second);
-                    }
-                }
+                else 
+                    shop.push(std::make_pair(priorityShop[c], arr[i]));
+                std::cout << "stack.top(): " << (shop.top().first) << std::endl;
             }   break;
             default: 
                 assertm(true, "Error: type's lexema is not valid")
