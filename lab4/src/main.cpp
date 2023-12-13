@@ -145,6 +145,7 @@ int main(int argc, char **argv) {
         memory.resize(Lexema::countVariables());
         printExpression(expression);
         processPOLIZ(expression, memory);
+        std::cout << "======================================" << std::endl;
         str.clear();
         expression.clear();
     }
